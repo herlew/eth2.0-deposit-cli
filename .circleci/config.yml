@@ -1,12 +1,13 @@
 version: 2.1
 
+# Linux
 tox_common: &tox_common
   working_directory: ~/repo
   steps:
     - checkout
     - restore_cache:
         keys:
-          - venv-deps2-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_test.txt" }}-{{ checksum "setup.py" }}
+          - venv-deps2-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_test.txt" }}-{{ checksum "setup.py" }}-{{ checksum "tox.ini" }}
     - run:
         name: install dependencies
         command: pip install --user tox
@@ -17,7 +18,9 @@ tox_common: &tox_common
         paths:
           - .tox
           - ./eggs
-        key: venv-deps2-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_test.txt" }}-{{ checksum "setup.py" }}
+          - ~/.local
+          - ~/.cache/pip
+        key: venv-deps2-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_test.txt" }}-{{ checksum "setup.py" }}-{{ checksum "tox.ini" }}
 
 orbs:
   win: circleci/windows@2.2.0 # The Windows orb give you everything you need to start using the Windows executor.          
@@ -91,7 +94,28 @@ jobs:
         environment:
           TOXENV: py38-script
   # Windows
-  win-py37-script:
+  tox-py37-windows:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - venv-deps2-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_test.txt" }}-{{ checksum "setup.py" }}-{{ checksum "tox.ini" }}
+      - run:
+          name: install dependencies
+          command: pip install --user tox
+      - run:
+          name: run tox - core pytest
+          command: python -m tox -e py37-core
+      - save_cache:
+          paths:
+            - .tox
+            - .\eggs
+          key: venv-deps2-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_test.txt" }}-{{ checksum "setup.py" }}-{{ checksum "tox.ini" }}
+  py37-script-windows:
     executor:
       name: win/default
       shell: powershell.exe
@@ -103,6 +127,7 @@ jobs:
       - run:
           name: Run deposit script on Windows"
           command: python ./test_deposit_script.py
+
 
 workflows:
   version: 2.1
@@ -119,4 +144,5 @@ workflows:
       - tox-py38-core
       - tox-py37-script
       - tox-py38-script
-      - win-py37-script
+      - tox-py37-windows
+      - py37-script-windows
