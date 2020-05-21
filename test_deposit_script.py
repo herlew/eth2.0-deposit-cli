@@ -15,6 +15,14 @@ async def main():
     else:  # Mac or Linux
         script = './deposit.sh'
 
+    print('[INFO] Creating subprocess 1: installation')
+    proc = await asyncio.create_subprocess_shell(
+        script + ' install',
+        stdin=asyncio.subprocess.PIPE,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
     cmd_args = [
         script,
         '--num_validators', '1',
@@ -22,7 +30,7 @@ async def main():
         '--password', 'MyPassword',
         '--folder', my_folder_path,
     ]
-    print('[INFO] Creating subprocess')
+    print('[INFO] Creating subprocess 2: deposit-cli')
     proc = await asyncio.create_subprocess_shell(
         ' '.join(cmd_args),
         stdin=asyncio.subprocess.PIPE,
