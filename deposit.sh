@@ -2,7 +2,7 @@
 
 if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
     echo $OSTYPE
-    if [[ $1 == install ]]; then
+    if [[ $1 == "install" ]]; then
         echo "Installing dependencies..."
         python3 -m pip3 install -r requirements.txt
         python3 setup.py install
@@ -13,7 +13,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
 
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
     echo $OSTYPE
-    if [[ $1 == install ]]; then
+    if [[ $1 == "install" ]]; then
         echo "Installing dependencies..."
         python -m pip install -r requirements.txt
         python setup.py install
