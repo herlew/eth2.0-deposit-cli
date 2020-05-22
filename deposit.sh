@@ -2,6 +2,7 @@
 
 if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
     echo $OSTYPE
+    echo $1
     if [[ $1 == "install" ]]; then
         echo "Installing dependencies..."
         python3 -m pip3 install -r requirements.txt
@@ -13,6 +14,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
 
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
     echo $OSTYPE
+    echo $1
     if [[ $1 == "install" ]]; then
         echo "Installing dependencies..."
         python -m pip install -r requirements.txt
